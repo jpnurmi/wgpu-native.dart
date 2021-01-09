@@ -1,5 +1,8 @@
+/// Experimental WGPU Dart FFI bindings
 library wgpu_ffi;
 
-import 'src/dylib.dart';
-
-int wgpu_get_version() => dylib.wgpu_get_version();
+export 'src/constants.dart';
+export 'src/enums.dart';
+export 'src/flags.dart';
+export 'src/functions.dart';
+export 'src/types.dart';

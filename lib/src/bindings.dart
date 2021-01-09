@@ -2294,7 +2294,7 @@ abstract class WGPUVertexFormat {
 class WGPUComputePass extends ffi.Struct {}
 
 class WGPUOption_BufferSize extends ffi.Struct {
-    // ### TODO: Error: Struct 'WGPUOption_BufferSize' is empty. Empty structs are undefined behavior.
+  // ### TODO: Error: Struct 'WGPUOption_BufferSize' is empty. Empty structs are undefined behavior.
   @ffi.Uint8()
   external int dummy;
 }
