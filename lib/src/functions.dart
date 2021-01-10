@@ -25,9 +25,11 @@ int wgpu_adapter_features(int adapter_id) {
 /// location. This function is unsafe as there is no guarantee that the
 /// pointer is valid and big enough to hold the adapter name.
 AdapterInfo wgpu_adapter_get_info(int adapter_id) {
-  final ptr = ffi.allocate<WGPUCAdapterInfo>(); // ### TODO: dispose
+  final ptr = ffi.allocate<WGPUCAdapterInfo>();
   dylib.wgpu_adapter_get_info(adapter_id, ptr);
-  return AdapterInfo.fromNative(ptr);
+  final copy = AdapterInfo.fromNative(ptr).copy();
+  ffi.free(ptr);
+  return copy;
 }
 
 Limits wgpu_adapter_limits(int adapter_id) {
