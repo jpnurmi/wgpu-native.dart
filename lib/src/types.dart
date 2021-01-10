@@ -1,7 +1,7 @@
 import 'dart:ffi' as ffi;
 import 'dart:typed_data';
 
-import 'package:ffi/ffi.dart';
+import 'package:ffi/ffi.dart' as ffi;
 
 import 'bindings.dart';
 import 'enums.dart';
@@ -32,7 +32,9 @@ class AdapterInfo extends _WGPUType<WGPUCAdapterInfo> {
   WGPUCAdapterInfo get _ref => _ptr.ref;
 
   /// Adapter name
-  String get name => Utf8.fromUtf8(_ref.name.cast(), length: _ref.name_length);
+  String get name {
+    return ffi.Utf8.fromUtf8(_ref.name.cast(), length: _ref.name_length);
+  }
 
   /// Vendor PCI id of the adapter
   int get vendor => _ref.vendor;
@@ -343,7 +345,7 @@ class BindGroupDescriptor extends _WGPUType<WGPUBindGroupDescriptor> {
 
   WGPUBindGroupDescriptor get _ref => _ptr.ref;
 
-  String get label => Utf8.fromUtf8(_ref.label.cast());
+  String get label => ffi.Utf8.fromUtf8(_ref.label.cast());
   int get layout => _ref.layout;
 
   List<BindGroupEntry> get entries {
@@ -392,7 +394,7 @@ class BindGroupLayoutDescriptor
 
   WGPUBindGroupLayoutDescriptor get _ref => _ptr.ref;
 
-  String get label => Utf8.fromUtf8(_ref.label.cast());
+  String get label => ffi.Utf8.fromUtf8(_ref.label.cast());
 
   List<BindGroupLayoutEntry> get entries {
     // ### TODO: lazy iterable
@@ -412,7 +414,7 @@ class BufferDescriptor extends _WGPUType<WGPUBufferDescriptor> {
   WGPUBufferDescriptor get _ref => _ptr.ref;
 
   /// Debug label of a buffer. This will show up in graphics debuggers for easy identification.
-  String get label => Utf8.fromUtf8(_ref.label.cast());
+  String get label => ffi.Utf8.fromUtf8(_ref.label.cast());
 
   /// Size of a buffer.
   int get size => _ref.size;
@@ -435,7 +437,7 @@ class CommandEncoderDescriptor extends _WGPUType<WGPUCommandEncoderDescriptor> {
   WGPUCommandEncoderDescriptor get _ref => _ptr.ref;
 
   /// Debug label for the command encoder. This will show up in graphics debuggers for easy identification.
-  String get label => Utf8.fromUtf8(_ref.label.cast());
+  String get label => ffi.Utf8.fromUtf8(_ref.label.cast());
 }
 
 class ProgrammableStageDescriptor
@@ -448,7 +450,7 @@ class ProgrammableStageDescriptor
 
   int get module => _ref.module;
 
-  String get entryPoint => Utf8.fromUtf8(_ref.entry_point.cast());
+  String get entryPoint => ffi.Utf8.fromUtf8(_ref.entry_point.cast());
 }
 
 class ComputePipelineDescriptor
@@ -485,7 +487,7 @@ class RenderBundleEncoderDescriptor
 
   WGPURenderBundleEncoderDescriptor get _ref => _ptr.ref;
 
-  String get label => Utf8.fromUtf8(_ref.label.cast());
+  String get label => ffi.Utf8.fromUtf8(_ref.label.cast());
 
   List<TextureFormat> get colorFormats {
     // ### TODO: lazy iterable
@@ -735,7 +737,7 @@ class SamplerDescriptor extends _WGPUType<WGPUSamplerDescriptor> {
   ChainedStruct get nextInChain =>
       ChainedStruct.fromNative(_ref.next_in_chain.cast());
 
-  String get label => Utf8.fromUtf8(_ref.label.cast());
+  String get label => ffi.Utf8.fromUtf8(_ref.label.cast());
 
   AddressMode get addressModeU => AddressMode.values[_ref.address_mode_u];
 
@@ -798,7 +800,7 @@ class TextureDescriptor extends _WGPUType<WGPUTextureDescriptor> {
   WGPUTextureDescriptor get _ref => _ptr.ref;
 
   /// Debug label of the texture. This will show up in graphics debuggers for easy identification.
-  String get label => Utf8.fromUtf8(_ref.label.cast());
+  String get label => ffi.Utf8.fromUtf8(_ref.label.cast());
 
   /// Size of the texture. For a regular 1D/2D texture, the unused sizes will be 1. For 2DArray textures, Z is the
   /// number of 2D textures in that array.
@@ -830,7 +832,7 @@ class RenderBundleDescriptor_Label
   WGPURenderBundleDescriptor_Label get _ref => _ptr.ref;
 
   /// Debug label of the render bundle encoder. This will show up in graphics debuggers for easy identification.
-  String get label => Utf8.fromUtf8(_ref.label.cast());
+  String get label => ffi.Utf8.fromUtf8(_ref.label.cast());
 }
 
 class RequestAdapterOptions extends _WGPUType<WGPURequestAdapterOptions> {
@@ -862,7 +864,7 @@ class TextureViewDescriptor extends _WGPUType<WGPUTextureViewDescriptor> {
   WGPUTextureViewDescriptor get _ref => _ptr.ref;
 
   /// Debug label of the texture view. This will show up in graphics debuggers for easy identification.
-  String get label => Utf8.fromUtf8(_ref.label.cast());
+  String get label => ffi.Utf8.fromUtf8(_ref.label.cast());
 
   /// Format of the texture view. At this time, it must be the same as the underlying format of the texture.
   TextureFormat get format => TextureFormat.values[_ref.format];
