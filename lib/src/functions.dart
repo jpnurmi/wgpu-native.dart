@@ -31,8 +31,8 @@ AdapterInfo wgpu_adapter_get_info(int adapter_id) {
 }
 
 Limits wgpu_adapter_limits(int adapter_id) {
-  final limits = dylib.wgpu_adapter_limits(adapter_id);
-  return Limits.fromNative(limits.addressOf); // ### TODO: temporary
+  final val = dylib.wgpu_adapter_limits(adapter_id);
+  return Limits.fromNative(val.addressOf).copy();
 }
 
 int wgpu_adapter_request_device(
@@ -444,8 +444,8 @@ int wgpu_device_get_default_queue(int device_id) {
 }
 
 Limits wgpu_device_limits(int device_id) {
-  final limits = dylib.wgpu_device_limits(device_id);
-  return Limits.fromNative(limits.addressOf); // ### TODO: temporary
+  final val = dylib.wgpu_device_limits(device_id);
+  return Limits.fromNative(val.addressOf).copy();
 }
 
 void wgpu_device_poll(int device_id, bool force_wait) {
@@ -990,8 +990,8 @@ void wgpu_shader_module_destroy(int shader_module_id) {
 }
 
 SwapChainOutput wgpu_swap_chain_get_next_texture(int swap_chain_id) {
-  final ptr = dylib.wgpu_swap_chain_get_next_texture(swap_chain_id);
-  return SwapChainOutput.fromNative(ptr.addressOf); // ### TODO: temporary
+  final val = dylib.wgpu_swap_chain_get_next_texture(swap_chain_id);
+  return SwapChainOutput.fromNative(val.addressOf).copy();
 }
 
 void wgpu_swap_chain_present(int swap_chain_id) {
