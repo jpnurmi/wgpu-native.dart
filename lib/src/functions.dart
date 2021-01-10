@@ -523,12 +523,15 @@ void wgpu_render_bundle_draw_indirect(
 
 int wgpu_render_bundle_encoder_finish(
   RenderBundleEncoder bundle_encoder_id,
-  RenderBundleDescriptor_Label desc,
+  String label,
 ) {
-  return dylib.wgpu_render_bundle_encoder_finish(
+  final cstr = ffi.Utf8.toUtf8(label);
+  final ret = dylib.wgpu_render_bundle_encoder_finish(
     bundle_encoder_id.toNative(),
-    desc.toNative(),
+    cstr.cast(),
   );
+  ffi.free(cstr);
+  return ret;
 }
 
 void wgpu_render_bundle_insert_debug_marker(
