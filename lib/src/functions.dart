@@ -274,18 +274,30 @@ void wgpu_compute_pass_push_debug_group(
   ffi.free(cstr);
 }
 
-// /// # Safety
-// ///
-// /// This function is unsafe as there is no guarantee that the given pointer is
-// /// valid for `offset_length` elements.
-// void wgpu_compute_pass_set_bind_group(
-//   ffi.Pointer<WGPUComputePass> pass,
-//   int index,
-//   int bind_group_id,
-//   ffi.Pointer<ffi.Uint32> offsets,
-//   int offset_length,
-// ) {
-// }
+/// # Safety
+///
+/// This function is unsafe as there is no guarantee that the given pointer is
+/// valid for `offset_length` elements.
+void wgpu_compute_pass_set_bind_group(
+  ComputePass pass,
+  int index,
+  int bind_group_id,
+  Uint32List offsets,
+) {
+  // ### TODO: avoid copy... (https://github.com/dart-lang/ffi/issues/31)
+  final array = ffi.allocate<ffi.Uint32>(count: offsets.length);
+  array.asTypedList(offsets.length).setAll(0, offsets);
+
+  dylib.wgpu_compute_pass_set_bind_group(
+    pass.toNative(),
+    index,
+    bind_group_id,
+    array,
+    offsets.length,
+  );
+
+  ffi.free(array);
+}
 
 void wgpu_compute_pass_set_pipeline(ComputePass pass, int pipeline_id) {
   dylib.wgpu_compute_pass_set_pipeline(pass.toNative(), pipeline_id);
@@ -437,43 +449,79 @@ void wgpu_pipeline_layout_destroy(int pipeline_layout_id) {
   dylib.wgpu_pipeline_layout_destroy(pipeline_layout_id);
 }
 
-// /// # Safety
-// ///
-// /// This function is unsafe as there is no guarantee that the given `command_buffers`
-// /// pointer is valid for `command_buffers_length` elements.
-// void wgpu_queue_submit(
-//   int queue_id,
-//   ffi.Pointer<ffi.Uint64> command_buffers,
-//   int command_buffers_length,
-// ) {
-// }
+/// # Safety
+///
+/// This function is unsafe as there is no guarantee that the given `command_buffers`
+/// pointer is valid for `command_buffers_length` elements.
+void wgpu_queue_submit(
+  int queue_id,
+  Uint64List command_buffers,
+) {
+  // ### TODO: avoid copy... (https://github.com/dart-lang/ffi/issues/31)
+  final array = ffi.allocate<ffi.Uint64>(count: command_buffers.length);
+  array.asTypedList(command_buffers.length).setAll(0, command_buffers);
 
-// /// # Safety
-// ///
-// /// This function is unsafe as there is no guarantee that the given `data`
-// /// pointer is valid for `data_length` elements.
-// void wgpu_queue_write_buffer(
-//   int queue_id,
-//   int buffer_id,
-//   int buffer_offset,
-//   ffi.Pointer<ffi.Uint8> data,
-//   int data_length,
-// ) {
-// }
+  dylib.wgpu_queue_submit(
+    queue_id,
+    array,
+    command_buffers.length,
+  );
 
-// /// # Safety
-// ///
-// /// This function is unsafe as there is no guarantee that the given `data`
-// /// pointer is valid for `data_length` elements.
-// void wgpu_queue_write_texture(
-//   int queue_id,
-//   ffi.Pointer<WGPUTextureCopyView> texture,
-//   ffi.Pointer<ffi.Uint8> data,
-//   int data_length,
-//   ffi.Pointer<WGPUTextureDataLayout> data_layout,
-//   ffi.Pointer<WGPUExtent3d> size,
-// ) {
-// }
+  ffi.free(array);
+}
+
+/// # Safety
+///
+/// This function is unsafe as there is no guarantee that the given `data`
+/// pointer is valid for `data_length` elements.
+void wgpu_queue_write_buffer(
+  int queue_id,
+  int buffer_id,
+  int buffer_offset,
+  Uint8List data,
+) {
+  // ### TODO: avoid copy...
+  // https://github.com/dart-lang/ffi/issues/31
+  final array = ffi.allocate<ffi.Uint8>(count: data.length);
+  array.asTypedList(data.length).setAll(0, data);
+
+  dylib.wgpu_queue_write_buffer(
+    queue_id,
+    buffer_id,
+    buffer_offset,
+    array,
+    data.length,
+  );
+
+  ffi.free(array);
+}
+
+/// # Safety
+///
+/// This function is unsafe as there is no guarantee that the given `data`
+/// pointer is valid for `data_length` elements.
+void wgpu_queue_write_texture(
+  int queue_id,
+  TextureCopyView texture,
+  Uint8List data,
+  TextureDataLayout data_layout,
+  Extent3D size,
+) {
+  // ### TODO: avoid copy... (https://github.com/dart-lang/ffi/issues/31)
+  final array = ffi.allocate<ffi.Uint8>(count: data.length);
+  array.asTypedList(data.length).setAll(0, data);
+
+  dylib.wgpu_queue_write_texture(
+    queue_id,
+    texture.toNative(),
+    array,
+    data.length,
+    data_layout.toNative(),
+    size.toNative(),
+  );
+
+  ffi.free(array);
+}
 
 void wgpu_render_bundle_destroy(int render_bundle_id) {
   dylib.wgpu_render_bundle_destroy(render_bundle_id);
@@ -556,18 +604,30 @@ void wgpu_render_bundle_push_debug_group(
   ffi.free(cstr);
 }
 
-// /// # Safety
-// ///
-// /// This function is unsafe as there is no guarantee that the given pointer is
-// /// valid for `offset_length` elements.
-// void wgpu_render_bundle_set_bind_group(
-//   ffi.Pointer<WGPURenderBundleEncoder> bundle,
-//   int index,
-//   int bind_group_id,
-//   ffi.Pointer<ffi.Uint32> offsets,
-//   int offset_length,
-// ) {
-// }
+/// # Safety
+///
+/// This function is unsafe as there is no guarantee that the given pointer is
+/// valid for `offset_length` elements.
+void wgpu_render_bundle_set_bind_group(
+  RenderBundleEncoder bundle,
+  int index,
+  int bind_group_id,
+  Uint32List offsets,
+) {
+  // ### TODO: avoid copy... (https://github.com/dart-lang/ffi/issues/31)
+  final array = ffi.allocate<ffi.Uint32>(count: offsets.length);
+  array.asTypedList(offsets.length).setAll(0, offsets);
+
+  dylib.wgpu_render_bundle_set_bind_group(
+    bundle.toNative(),
+    index,
+    bind_group_id,
+    array,
+    offsets.length,
+  );
+
+  ffi.free(array);
+}
 
 void wgpu_render_bundle_set_index_buffer(
   RenderBundleEncoder bundle,
@@ -779,18 +839,30 @@ void wgpu_render_pass_push_debug_group(
   ffi.free(cstr);
 }
 
-// /// # Safety
-// ///
-// /// This function is unsafe as there is no guarantee that the given pointer is
-// /// valid for `offset_length` elements.
-// void wgpu_render_pass_set_bind_group(
-//   ffi.Pointer<WGPURenderPass> pass,
-//   int index,
-//   int bind_group_id,
-//   ffi.Pointer<ffi.Uint32> offsets,
-//   int offset_length,
-// ) {
-// }
+/// # Safety
+///
+/// This function is unsafe as there is no guarantee that the given pointer is
+/// valid for `offset_length` elements.
+void wgpu_render_pass_set_bind_group(
+  RenderPass pass,
+  int index,
+  int bind_group_id,
+  Uint32List offsets,
+) {
+  // ### TODO: avoid copy... (https://github.com/dart-lang/ffi/issues/31)
+  final array = ffi.allocate<ffi.Uint32>(count: offsets.length);
+  array.asTypedList(offsets.length).setAll(0, offsets);
+
+  dylib.wgpu_render_pass_set_bind_group(
+    pass.toNative(),
+    index,
+    bind_group_id,
+    array,
+    offsets.length,
+  );
+
+  ffi.free(array);
+}
 
 void wgpu_render_pass_set_blend_color(RenderPass pass, Color color) {
   dylib.wgpu_render_pass_set_blend_color(pass.toNative(), color.toNative());
