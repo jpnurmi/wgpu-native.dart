@@ -1,6 +1,7 @@
 /// Experimental WGPU Dart FFI bindings
 library wgpu_ffi;
 
+export 'src/callbacks.dart';
 export 'src/constants.dart';
 export 'src/enums.dart';
 export 'src/flags.dart';
