@@ -26,8 +26,8 @@ class _WGPUType<T extends ffi.NativeType> {
   String toString() => '$runtimeType($_ptr)';
 }
 
-class CAdapterInfo extends _WGPUType<WGPUCAdapterInfo> {
-  CAdapterInfo.fromNative(ffi.Pointer<WGPUCAdapterInfo> ptr) : super(ptr);
+class AdapterInfo extends _WGPUType<WGPUCAdapterInfo> {
+  AdapterInfo.fromNative(ffi.Pointer<WGPUCAdapterInfo> ptr) : super(ptr);
 
   WGPUCAdapterInfo get _ref => _ptr.ref;
 
@@ -49,14 +49,6 @@ class CAdapterInfo extends _WGPUType<WGPUCAdapterInfo> {
 
 class ChainedStruct extends _WGPUType<WGPUChainedStruct> {
   ChainedStruct.fromNative(ffi.Pointer<WGPUChainedStruct> ptr) : super(ptr);
-}
-
-class CLimits extends _WGPUType<WGPUCLimits> {
-  CLimits.fromNative(ffi.Pointer<WGPUCLimits> ptr) : super(ptr);
-
-  WGPUCLimits get _ref => _ptr.ref;
-
-  int get maxBindGroups => _ref.max_bind_groups;
 }
 
 class ComputePass extends _WGPUType<WGPUComputePass> {
@@ -85,6 +77,14 @@ class Color extends _WGPUType<WGPUColor> {
   double get green => _ref.g;
   double get blue => _ref.b;
   double get alpha => _ref.a;
+}
+
+class Limits extends _WGPUType<WGPUCLimits> {
+  Limits.fromNative(ffi.Pointer<WGPUCLimits> ptr) : super(ptr);
+
+  WGPUCLimits get _ref => _ptr.ref;
+
+  int get maxBindGroups => _ref.max_bind_groups;
 }
 
 class Option_BufferSize extends _WGPUType<WGPUOption_BufferSize> {

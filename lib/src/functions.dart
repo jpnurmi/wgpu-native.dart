@@ -24,21 +24,21 @@ int wgpu_adapter_features(int adapter_id) {
 /// The field `info.name` is expected to point to a pre-allocated memory
 /// location. This function is unsafe as there is no guarantee that the
 /// pointer is valid and big enough to hold the adapter name.
-CAdapterInfo wgpu_adapter_get_info(int adapter_id) {
+AdapterInfo wgpu_adapter_get_info(int adapter_id) {
   final ptr = ffi.allocate<WGPUCAdapterInfo>(); // ### TODO: dispose
   dylib.wgpu_adapter_get_info(adapter_id, ptr);
-  return CAdapterInfo.fromNative(ptr);
+  return AdapterInfo.fromNative(ptr);
 }
 
-CLimits wgpu_adapter_limits(int adapter_id) {
+Limits wgpu_adapter_limits(int adapter_id) {
   final limits = dylib.wgpu_adapter_limits(adapter_id);
-  return CLimits.fromNative(limits.addressOf); // ### TODO: temporary
+  return Limits.fromNative(limits.addressOf); // ### TODO: temporary
 }
 
 int wgpu_adapter_request_device(
   int adapter_id,
   int features,
-  CLimits limits,
+  Limits limits,
   bool sharedValidation,
   String tracePath,
 ) {
@@ -443,9 +443,9 @@ int wgpu_device_get_default_queue(int device_id) {
   return dylib.wgpu_device_get_default_queue(device_id);
 }
 
-CLimits wgpu_device_limits(int device_id) {
+Limits wgpu_device_limits(int device_id) {
   final limits = dylib.wgpu_device_limits(device_id);
-  return CLimits.fromNative(limits.addressOf); // ### TODO: temporary
+  return Limits.fromNative(limits.addressOf); // ### TODO: temporary
 }
 
 void wgpu_device_poll(int device_id, bool force_wait) {
