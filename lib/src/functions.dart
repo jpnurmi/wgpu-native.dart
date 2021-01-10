@@ -489,8 +489,7 @@ void wgpu_queue_write_buffer(
   int buffer_offset,
   Uint8List data,
 ) {
-  // ### TODO: avoid copy...
-  // https://github.com/dart-lang/ffi/issues/31
+  // ### TODO: avoid copy... (https://github.com/dart-lang/ffi/issues/31)
   final array = ffi.allocate<ffi.Uint8>(count: data.length);
   array.asTypedList(data.length).setAll(0, data);
 
