@@ -19,9 +19,6 @@ enum AddressMode {
   mirrorRepeat,
 }
 
-/// Backends supported by wgpu.
-enum Backend { empty, vulkan, metal, dx12, dx11, gl, browserWebGpu }
-
 enum BindingType {
   uniformBuffer,
   storageBuffer,

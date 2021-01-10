@@ -5,6 +5,7 @@ import 'package:ffi/ffi.dart' as ffi;
 
 import 'bindings.dart';
 import 'enums.dart';
+import 'flags.dart';
 import 'mem.dart' as ffi;
 
 class _WGPUType<T extends ffi.NativeType> {
@@ -79,7 +80,7 @@ class AdapterInfo extends _WGPUType<WGPUCAdapterInfo> {
   DeviceType get deviceType => DeviceType.values[_ref.device_type];
 
   /// Backend used for device
-  Backend get backend => Backend.values[_ref.backend];
+  int get backend => _ref.backend;
 }
 
 class ChainedStruct extends _WGPUType<WGPUChainedStruct> {

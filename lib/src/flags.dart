@@ -1,3 +1,14 @@
+/// Backends supported by wgpu.
+abstract class Backend {
+  static const int empty = 0;
+  static const int vulkan = 1;
+  static const int metal = 2;
+  static const int dx12 = 3;
+  static const int dx11 = 4;
+  static const int gl = 5;
+  static const int browserWebGpu = 6;
+}
+
 /// Different ways that you can use a buffer.
 ///
 /// The usages determine what kind of memory the buffer is allocated from and what
