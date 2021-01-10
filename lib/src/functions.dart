@@ -310,33 +310,39 @@ void wgpu_compute_pipeline_destroy(int compute_pipeline_id) {
   dylib.wgpu_compute_pipeline_destroy(compute_pipeline_id);
 }
 
-// int wgpu_create_surface_from_android(
-//   ffi.Pointer<ffi.Void> a_native_window,
-// ) {
-// }
+int wgpu_create_surface_from_android(int a_native_window) {
+  return dylib.wgpu_create_surface_from_android(
+    ffi.Pointer<ffi.Void>.fromAddress(a_native_window),
+  );
+}
 
-// int wgpu_create_surface_from_metal_layer(
-//   ffi.Pointer<ffi.Void> layer,
-// ) {
-// }
+int wgpu_create_surface_from_metal_layer(int layer) {
+  return dylib.wgpu_create_surface_from_metal_layer(
+    ffi.Pointer<ffi.Void>.fromAddress(layer),
+  );
+}
 
-// int wgpu_create_surface_from_wayland(
-//   ffi.Pointer<ffi.Void> surface,
-//   ffi.Pointer<ffi.Void> display,
-// ) {
-// }
+int wgpu_create_surface_from_wayland(int surface, int display) {
+  return dylib.wgpu_create_surface_from_wayland(
+    ffi.Pointer<ffi.Void>.fromAddress(surface),
+    ffi.Pointer<ffi.Void>.fromAddress(display),
+  );
+}
 
-// int wgpu_create_surface_from_windows_hwnd(
-//   ffi.Pointer<ffi.Void> _hinstance,
-//   ffi.Pointer<ffi.Void> hwnd,
-// ) {
-// }
+int wgpu_create_surface_from_windows_hwnd(int hinstance, int hwnd) {
+  return dylib.wgpu_create_surface_from_windows_hwnd(
+    ffi.Pointer<ffi.Void>.fromAddress(hinstance),
+    ffi.Pointer<ffi.Void>.fromAddress(hwnd),
+  );
+}
 
-// int wgpu_create_surface_from_xlib(
-//   ffi.Pointer<ffi.Pointer<ffi.Void>> display,
-//   int window,
-// ) {
-// }
+int wgpu_create_surface_from_xlib(int display, int window) {
+  final ptr = ffi.Pointer<ffi.Uint64>.fromAddress(display);
+  return dylib.wgpu_create_surface_from_xlib(
+    ffi.Pointer<ffi.Pointer<ffi.Void>>.fromAddress(ptr.value),
+    window,
+  );
+}
 
 int wgpu_device_create_bind_group(int device_id, BindGroupDescriptor desc) {
   return dylib.wgpu_device_create_bind_group(device_id, desc.toNative());
