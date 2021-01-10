@@ -1112,7 +1112,12 @@ class RenderBundleDescriptor_Label
 }
 
 class RequestAdapterOptions extends _WGPUType<WGPURequestAdapterOptions> {
-  RequestAdapterOptions() : super._alloc();
+  RequestAdapterOptions({PowerPreference? powerPreference}) : super._alloc() {
+    if (powerPreference != null) {
+      _ref.power_preference = powerPreference.index;
+    }
+  }
+
   RequestAdapterOptions.fromNative(ffi.Pointer<WGPURequestAdapterOptions> ptr)
       : super._adopt(ptr);
   RequestAdapterOptions._copy(ffi.Pointer<WGPURequestAdapterOptions> ptr)
