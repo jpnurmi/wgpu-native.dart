@@ -134,7 +134,12 @@ class Color extends _WGPUType<WGPUColor> {
 }
 
 class Limits extends _WGPUType<WGPUCLimits> {
-  Limits() : super._alloc();
+  Limits({int? maxBindGroups}) : super._alloc() {
+    if (maxBindGroups != null) {
+      _ref.max_bind_groups = maxBindGroups;
+    }
+  }
+
   Limits.fromNative(ffi.Pointer<WGPUCLimits> ptr) : super._adopt(ptr);
   Limits._copy(ffi.Pointer<WGPUCLimits> ptr) : super._copy(ptr);
 
