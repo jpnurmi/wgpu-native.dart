@@ -9,6 +9,8 @@ import 'dylib.dart';
 import 'enums.dart';
 import 'types.dart';
 
+const int kNameLength = 512; // ### TODO: arbitrary
+
 void wgpu_adapter_destroy(int adapter_id) {
   dylib.wgpu_adapter_destroy(adapter_id);
 }
@@ -26,8 +28,11 @@ int wgpu_adapter_features(int adapter_id) {
 /// pointer is valid and big enough to hold the adapter name.
 AdapterInfo wgpu_adapter_get_info(int adapter_id) {
   final ptr = ffi.allocate<WGPUCAdapterInfo>();
+  ptr.ref.name = ffi.allocate<ffi.Int8>(count: kNameLength);
+  ptr.ref.name_length = kNameLength;
   dylib.wgpu_adapter_get_info(adapter_id, ptr);
   final copy = AdapterInfo.fromNative(ptr).copy();
+  ffi.free(ptr.ref.name);
   ffi.free(ptr);
   return copy;
 }
