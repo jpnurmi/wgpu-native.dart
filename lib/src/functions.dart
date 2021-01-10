@@ -4,7 +4,9 @@ import 'dart:typed_data';
 import 'package:ffi/ffi.dart' as ffi;
 
 import 'bindings.dart';
+import 'callbacks.dart';
 import 'dylib.dart';
+import 'enums.dart';
 import 'types.dart';
 
 void wgpu_adapter_destroy(int adapter_id) {
@@ -82,23 +84,24 @@ Uint8List wgpu_buffer_get_mapped_range(
       .asTypedList(len);
 }
 
-// void wgpu_buffer_map_read_async(
-//   int buffer_id,
-//   int start,
-//   int size,
-//   ffi.Pointer<ffi.NativeFunction<WGPUBufferMapCallback>> callback,
-//   ffi.Pointer<ffi.Uint8> user_data,
-// ) {
-// }
+void wgpu_buffer_map_read_async(
+  int buffer_id,
+  int start,
+  int size,
+  BufferMapCallback callback,
+) {
+  void _callback(int status, ffi.Pointer<ffi.Uint8> user_data) {
+    callback.call(BufferMapAsyncStatus.values[status]);
+  }
 
-// void wgpu_buffer_map_write_async(
-//   int buffer_id,
-//   int start,
-//   int size,
-//   ffi.Pointer<ffi.NativeFunction<WGPUBufferMapCallback>> callback,
-//   ffi.Pointer<ffi.Uint8> user_data,
-// ) {
-// }
+  dylib.wgpu_buffer_map_write_async(
+    buffer_id,
+    start,
+    size,
+    ffi.Pointer.fromFunction(_callback),
+    ffi.nullptr,
+  );
+}
 
 void wgpu_buffer_unmap(int buffer_id) {
   dylib.wgpu_buffer_unmap(buffer_id);
@@ -940,26 +943,40 @@ void wgpu_render_pipeline_destroy(int render_pipeline_id) {
   dylib.wgpu_render_pipeline_destroy(render_pipeline_id);
 }
 
-// /// # Safety
-// ///
-// /// This function is unsafe as it calls an unsafe extern callback.
-// void wgpu_request_adapter_async(
-//   ffi.Pointer<WGPURequestAdapterOptions> desc,
-//   int mask,
-//   bool allow_unsafe,
-//   ffi.Pointer<ffi.NativeFunction<WGPURequestAdapterCallback>> callback,
-//   ffi.Pointer<ffi.Void> userdata,
-// ) {
-// }
+/// # Safety
+///
+/// This function is unsafe as it calls an unsafe extern callback.
+void wgpu_request_adapter_async(
+  RequestAdapterOptions desc,
+  int mask,
+  bool allow_unsafe,
+  RequestAdapterCallback callback,
+) {
+  void _callback(int adapter_id, ffi.Pointer<ffi.Void> user_data) {
+    callback.call(adapter_id);
+  }
+
+  dylib.wgpu_request_adapter_async(
+    desc.toNative(),
+    mask,
+    allow_unsafe,
+    ffi.Pointer.fromFunction(_callback),
+    ffi.nullptr,
+  );
+}
 
 void wgpu_sampler_destroy(int sampler_id) {
   dylib.wgpu_sampler_destroy(sampler_id);
 }
 
-// void wgpu_set_log_callback(
-//   ffi.Pointer<ffi.NativeFunction<WGPULogCallback>> callback,
-// ) {
-// }
+void wgpu_set_log_callback(LogCallback callback) {
+  void _callback(int level, ffi.Pointer<ffi.Int8> cstr) {
+    final msg = ffi.Utf8.fromUtf8(cstr.cast());
+    callback.call(level, msg);
+  }
+
+  dylib.wgpu_set_log_callback(ffi.Pointer.fromFunction(_callback));
+}
 
 int wgpu_set_log_level(int level) => dylib.wgpu_set_log_level(level);
 
