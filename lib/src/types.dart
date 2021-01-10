@@ -9,16 +9,33 @@ import 'mem.dart' as ffi;
 
 class _WGPUType<T extends ffi.NativeType> {
   final ffi.Pointer<T> _ptr;
+  final bool _own;
 
-  _WGPUType.adopt(this._ptr) : assert(_ptr != ffi.nullptr);
-  _WGPUType.init(this._ptr) : assert(_ptr != ffi.nullptr) {
-    ffi.memset(_ptr.cast(), 0, ffi.sizeOf<T>());
+  _WGPUType._({
+    required ffi.Pointer<T> ptr,
+    required bool own,
+    bool? init,
+    ffi.Pointer<T>? copy,
+  })  : assert(ptr != ffi.nullptr),
+        _ptr = ptr,
+        _own = own {
+    if (init ?? false == true) {
+      ffi.memset(_ptr, 0, ffi.sizeOf<T>());
+    }
+    if (copy != null) {
+      ffi.memcpy(_ptr, copy, ffi.sizeOf<T>());
+    }
   }
 
-  ffi.Pointer<T> _copy() {
-    final dst = ffi.allocate<T>();
-    ffi.memcpy(dst.cast(), _ptr.cast(), ffi.sizeOf<T>());
-    return dst.cast();
+  _WGPUType._adopt(ffi.Pointer<T> ptr) : this._(ptr: ptr, own: false);
+
+  _WGPUType._alloc() : this._(ptr: ffi.allocate<T>(), own: true, init: true);
+
+  _WGPUType._copy(ffi.Pointer<T> ptr)
+      : this._(ptr: ffi.allocate<T>(), own: true, copy: ptr);
+
+  void dispose() {
+    if (_own) ffi.free(_ptr);
   }
 
   ffi.Pointer<T> toNative() => _ptr;
@@ -37,9 +54,11 @@ class _WGPUType<T extends ffi.NativeType> {
 }
 
 class AdapterInfo extends _WGPUType<WGPUCAdapterInfo> {
-  AdapterInfo() : super.init(ffi.allocate<WGPUCAdapterInfo>());
-  AdapterInfo.fromNative(ffi.Pointer<WGPUCAdapterInfo> ptr) : super.adopt(ptr);
-  AdapterInfo copy() => AdapterInfo.fromNative(_copy());
+  AdapterInfo() : super._alloc();
+  AdapterInfo.fromNative(ffi.Pointer<WGPUCAdapterInfo> ptr) : super._adopt(ptr);
+  AdapterInfo._copy(ffi.Pointer<WGPUCAdapterInfo> ptr) : super._copy(ptr);
+
+  AdapterInfo copy() => AdapterInfo._copy(_ptr);
 
   WGPUCAdapterInfo get _ref => _ptr.ref;
 
@@ -62,24 +81,30 @@ class AdapterInfo extends _WGPUType<WGPUCAdapterInfo> {
 }
 
 class ChainedStruct extends _WGPUType<WGPUChainedStruct> {
-  ChainedStruct() : super.init(ffi.allocate<WGPUChainedStruct>());
+  ChainedStruct() : super._alloc();
   ChainedStruct.fromNative(ffi.Pointer<WGPUChainedStruct> ptr)
-      : super.adopt(ptr);
-  ChainedStruct copy() => ChainedStruct.fromNative(_copy());
+      : super._adopt(ptr);
+  ChainedStruct._copy(ffi.Pointer<WGPUChainedStruct> ptr) : super._copy(ptr);
+
+  ChainedStruct copy() => ChainedStruct._copy(_ptr);
 }
 
 class ComputePass extends _WGPUType<WGPUComputePass> {
-  ComputePass() : super.init(ffi.allocate<WGPUComputePass>());
-  ComputePass.fromNative(ffi.Pointer<WGPUComputePass> ptr) : super.adopt(ptr);
-  ComputePass copy() => ComputePass.fromNative(_copy());
+  ComputePass() : super._alloc();
+  ComputePass.fromNative(ffi.Pointer<WGPUComputePass> ptr) : super._adopt(ptr);
+  ComputePass._copy(ffi.Pointer<WGPUComputePass> ptr) : super._copy(ptr);
+
+  ComputePass copy() => ComputePass._copy(_ptr);
 }
 
 class ComputePassDescriptor extends _WGPUType<WGPUComputePassDescriptor> {
-  ComputePassDescriptor()
-      : super.init(ffi.allocate<WGPUComputePassDescriptor>());
+  ComputePassDescriptor() : super._alloc();
   ComputePassDescriptor.fromNative(ffi.Pointer<WGPUComputePassDescriptor> ptr)
-      : super.adopt(ptr);
-  ComputePassDescriptor copy() => ComputePassDescriptor.fromNative(_copy());
+      : super._adopt(ptr);
+  ComputePassDescriptor._copy(ffi.Pointer<WGPUComputePassDescriptor> ptr)
+      : super._copy(ptr);
+
+  ComputePassDescriptor copy() => ComputePassDescriptor._copy(_ptr);
 
   WGPUComputePassDescriptor get _ref => _ptr.ref;
 
@@ -90,9 +115,11 @@ class ComputePassDescriptor extends _WGPUType<WGPUComputePassDescriptor> {
 ///
 /// This is not to be used as a generic color type, only for specific wgpu interfaces.
 class Color extends _WGPUType<WGPUColor> {
-  Color() : super.init(ffi.allocate<WGPUColor>());
-  Color.fromNative(ffi.Pointer<WGPUColor> ptr) : super.adopt(ptr);
-  Color copy() => Color.fromNative(_copy());
+  Color() : super._alloc();
+  Color.fromNative(ffi.Pointer<WGPUColor> ptr) : super._adopt(ptr);
+  Color._copy(ffi.Pointer<WGPUColor> ptr) : super._copy(ptr);
+
+  Color copy() => Color._copy(_ptr);
 
   /// ### TODO: replace with dart:ui Color?
   WGPUColor get _ref => _ptr.ref;
@@ -104,9 +131,11 @@ class Color extends _WGPUType<WGPUColor> {
 }
 
 class Limits extends _WGPUType<WGPUCLimits> {
-  Limits() : super.init(ffi.allocate<WGPUCLimits>());
-  Limits.fromNative(ffi.Pointer<WGPUCLimits> ptr) : super.adopt(ptr);
-  Limits copy() => Limits.fromNative(_copy());
+  Limits() : super._alloc();
+  Limits.fromNative(ffi.Pointer<WGPUCLimits> ptr) : super._adopt(ptr);
+  Limits._copy(ffi.Pointer<WGPUCLimits> ptr) : super._copy(ptr);
+
+  Limits copy() => Limits._copy(_ptr);
 
   WGPUCLimits get _ref => _ptr.ref;
 
@@ -114,18 +143,24 @@ class Limits extends _WGPUType<WGPUCLimits> {
 }
 
 class Option_BufferSize extends _WGPUType<WGPUOption_BufferSize> {
-  Option_BufferSize() : super.init(ffi.allocate<WGPUOption_BufferSize>());
+  Option_BufferSize() : super._alloc();
   Option_BufferSize.fromNative(ffi.Pointer<WGPUOption_BufferSize> ptr)
-      : super.adopt(ptr);
-  Option_BufferSize copy() => Option_BufferSize.fromNative(_copy());
+      : super._adopt(ptr);
+  Option_BufferSize._copy(ffi.Pointer<WGPUOption_BufferSize> ptr)
+      : super._copy(ptr);
+
+  Option_BufferSize copy() => Option_BufferSize._copy(_ptr);
 }
 
 /// Describes an individual channel within a render pass, such as color, depth, or stencil.
 class PassChannel_Color extends _WGPUType<WGPUPassChannel_Color> {
-  PassChannel_Color() : super.init(ffi.allocate<WGPUPassChannel_Color>());
+  PassChannel_Color() : super._alloc();
   PassChannel_Color.fromNative(ffi.Pointer<WGPUPassChannel_Color> ptr)
-      : super.adopt(ptr);
-  PassChannel_Color copy() => PassChannel_Color.fromNative(_copy());
+      : super._adopt(ptr);
+  PassChannel_Color._copy(ffi.Pointer<WGPUPassChannel_Color> ptr)
+      : super._copy(ptr);
+
+  PassChannel_Color copy() => PassChannel_Color._copy(_ptr);
 
   WGPUPassChannel_Color get _ref => _ptr.ref;
 
@@ -145,16 +180,21 @@ class PassChannel_Color extends _WGPUType<WGPUPassChannel_Color> {
 }
 
 class RenderBundleEncoder extends _WGPUType<WGPURenderBundleEncoder> {
-  RenderBundleEncoder() : super.init(ffi.allocate<WGPURenderBundleEncoder>());
+  RenderBundleEncoder() : super._alloc();
   RenderBundleEncoder.fromNative(ffi.Pointer<WGPURenderBundleEncoder> ptr)
-      : super.adopt(ptr);
-  RenderBundleEncoder copy() => RenderBundleEncoder.fromNative(_copy());
+      : super._adopt(ptr);
+  RenderBundleEncoder._copy(ffi.Pointer<WGPURenderBundleEncoder> ptr)
+      : super._copy(ptr);
+
+  RenderBundleEncoder copy() => RenderBundleEncoder._copy(_ptr);
 }
 
 class RenderPass extends _WGPUType<WGPURenderPass> {
-  RenderPass() : super.init(ffi.allocate<WGPURenderPass>());
-  RenderPass.fromNative(ffi.Pointer<WGPURenderPass> ptr) : super.adopt(ptr);
-  RenderPass copy() => RenderPass.fromNative(_copy());
+  RenderPass() : super._alloc();
+  RenderPass.fromNative(ffi.Pointer<WGPURenderPass> ptr) : super._adopt(ptr);
+  RenderPass._copy(ffi.Pointer<WGPURenderPass> ptr) : super._copy(ptr);
+
+  RenderPass copy() => RenderPass._copy(_ptr);
 }
 
 /// Describes a color attachment to a [`RenderPass`].
@@ -162,15 +202,18 @@ class RenderPass extends _WGPUType<WGPURenderPass> {
 //     extends ffi.Struct {
 class RenderPassColorAttachmentDescriptorBase_TextureViewId extends _WGPUType<
     WGPURenderPassColorAttachmentDescriptorBase_TextureViewId> {
-  RenderPassColorAttachmentDescriptorBase_TextureViewId()
-      : super.init(ffi.allocate<
-            WGPURenderPassColorAttachmentDescriptorBase_TextureViewId>());
+  RenderPassColorAttachmentDescriptorBase_TextureViewId() : super._alloc();
   RenderPassColorAttachmentDescriptorBase_TextureViewId.fromNative(
       ffi.Pointer<WGPURenderPassColorAttachmentDescriptorBase_TextureViewId>
           ptr)
-      : super.adopt(ptr);
+      : super._adopt(ptr);
+  RenderPassColorAttachmentDescriptorBase_TextureViewId._copy(
+      ffi.Pointer<WGPURenderPassColorAttachmentDescriptorBase_TextureViewId>
+          ptr)
+      : super._copy(ptr);
+
   RenderPassColorAttachmentDescriptorBase_TextureViewId copy() =>
-      RenderPassColorAttachmentDescriptorBase_TextureViewId.fromNative(_copy());
+      RenderPassColorAttachmentDescriptorBase_TextureViewId._copy(_ptr);
 
   WGPURenderPassColorAttachmentDescriptorBase_TextureViewId get _ref =>
       _ptr.ref;
@@ -190,10 +233,13 @@ class RenderPassColorAttachmentDescriptorBase_TextureViewId extends _WGPUType<
 
 /// Describes an individual channel within a render pass, such as color, depth, or stencil.
 class PassChannel_f32 extends _WGPUType<WGPUPassChannel_f32> {
-  PassChannel_f32() : super.init(ffi.allocate<WGPUPassChannel_f32>());
+  PassChannel_f32() : super._alloc();
   PassChannel_f32.fromNative(ffi.Pointer<WGPUPassChannel_f32> ptr)
-      : super.adopt(ptr);
-  PassChannel_f32 copy() => PassChannel_f32.fromNative(_copy());
+      : super._adopt(ptr);
+  PassChannel_f32._copy(ffi.Pointer<WGPUPassChannel_f32> ptr)
+      : super._copy(ptr);
+
+  PassChannel_f32 copy() => PassChannel_f32._copy(_ptr);
 
   WGPUPassChannel_f32 get _ref => _ptr.ref;
 
@@ -214,10 +260,13 @@ class PassChannel_f32 extends _WGPUType<WGPUPassChannel_f32> {
 
 /// Describes an individual channel within a render pass, such as color, depth, or stencil.
 class PassChannel_u32 extends _WGPUType<WGPUPassChannel_u32> {
-  PassChannel_u32() : super.init(ffi.allocate<WGPUPassChannel_u32>());
+  PassChannel_u32() : super._alloc();
   PassChannel_u32.fromNative(ffi.Pointer<WGPUPassChannel_u32> ptr)
-      : super.adopt(ptr);
-  PassChannel_u32 copy() => PassChannel_u32.fromNative(_copy());
+      : super._adopt(ptr);
+  PassChannel_u32._copy(ffi.Pointer<WGPUPassChannel_u32> ptr)
+      : super._copy(ptr);
+
+  PassChannel_u32 copy() => PassChannel_u32._copy(_ptr);
 
   WGPUPassChannel_u32 get _ref => _ptr.ref;
 
@@ -241,16 +290,20 @@ class RenderPassDepthStencilAttachmentDescriptorBase_TextureViewId
     extends _WGPUType<
         WGPURenderPassDepthStencilAttachmentDescriptorBase_TextureViewId> {
   RenderPassDepthStencilAttachmentDescriptorBase_TextureViewId()
-      : super.init(ffi.allocate<
-            WGPURenderPassDepthStencilAttachmentDescriptorBase_TextureViewId>());
+      : super._alloc();
   RenderPassDepthStencilAttachmentDescriptorBase_TextureViewId.fromNative(
       ffi.Pointer<
               WGPURenderPassDepthStencilAttachmentDescriptorBase_TextureViewId>
           ptr)
-      : super.adopt(ptr);
+      : super._adopt(ptr);
+  RenderPassDepthStencilAttachmentDescriptorBase_TextureViewId._copy(
+      ffi.Pointer<
+              WGPURenderPassDepthStencilAttachmentDescriptorBase_TextureViewId>
+          ptr)
+      : super._copy(ptr);
+
   RenderPassDepthStencilAttachmentDescriptorBase_TextureViewId copy() =>
-      RenderPassDepthStencilAttachmentDescriptorBase_TextureViewId.fromNative(
-          _copy());
+      RenderPassDepthStencilAttachmentDescriptorBase_TextureViewId._copy(_ptr);
 
   WGPURenderPassDepthStencilAttachmentDescriptorBase_TextureViewId get _ref =>
       _ptr.ref;
@@ -268,10 +321,13 @@ class RenderPassDepthStencilAttachmentDescriptorBase_TextureViewId
 }
 
 class RenderPassDescriptor extends _WGPUType<WGPURenderPassDescriptor> {
-  RenderPassDescriptor() : super.init(ffi.allocate<WGPURenderPassDescriptor>());
+  RenderPassDescriptor() : super._alloc();
   RenderPassDescriptor.fromNative(ffi.Pointer<WGPURenderPassDescriptor> ptr)
-      : super.adopt(ptr);
-  RenderPassDescriptor copy() => RenderPassDescriptor.fromNative(_copy());
+      : super._adopt(ptr);
+  RenderPassDescriptor._copy(ffi.Pointer<WGPURenderPassDescriptor> ptr)
+      : super._copy(ptr);
+
+  RenderPassDescriptor copy() => RenderPassDescriptor._copy(_ptr);
 
   WGPURenderPassDescriptor get _ref => _ptr.ref;
 
@@ -296,10 +352,13 @@ class RenderPassDescriptor extends _WGPUType<WGPURenderPassDescriptor> {
 
 /// Layout of a texture in a buffer's memory.
 class TextureDataLayout extends _WGPUType<WGPUTextureDataLayout> {
-  TextureDataLayout() : super.init(ffi.allocate<WGPUTextureDataLayout>());
+  TextureDataLayout() : super._alloc();
   TextureDataLayout.fromNative(ffi.Pointer<WGPUTextureDataLayout> ptr)
-      : super.adopt(ptr);
-  TextureDataLayout copy() => TextureDataLayout.fromNative(_copy());
+      : super._adopt(ptr);
+  TextureDataLayout._copy(ffi.Pointer<WGPUTextureDataLayout> ptr)
+      : super._copy(ptr);
+
+  TextureDataLayout copy() => TextureDataLayout._copy(_ptr);
 
   WGPUTextureDataLayout get _ref => _ptr.ref;
 
@@ -324,10 +383,12 @@ class TextureDataLayout extends _WGPUType<WGPUTextureDataLayout> {
 }
 
 class BufferCopyView extends _WGPUType<WGPUBufferCopyView> {
-  BufferCopyView() : super.init(ffi.allocate<WGPUBufferCopyView>());
+  BufferCopyView() : super._alloc();
   BufferCopyView.fromNative(ffi.Pointer<WGPUBufferCopyView> ptr)
-      : super.adopt(ptr);
-  BufferCopyView copy() => BufferCopyView.fromNative(_copy());
+      : super._adopt(ptr);
+  BufferCopyView._copy(ffi.Pointer<WGPUBufferCopyView> ptr) : super._copy(ptr);
+
+  BufferCopyView copy() => BufferCopyView._copy(_ptr);
 
   WGPUBufferCopyView get _ref => _ptr.ref;
 
@@ -340,9 +401,11 @@ class BufferCopyView extends _WGPUType<WGPUBufferCopyView> {
 
 /// Origin of a copy to/from a texture.
 class Origin3D extends _WGPUType<WGPUOrigin3d> {
-  Origin3D() : super.init(ffi.allocate<WGPUOrigin3d>());
-  Origin3D.fromNative(ffi.Pointer<WGPUOrigin3d> ptr) : super.adopt(ptr);
-  Origin3D copy() => Origin3D.fromNative(_copy());
+  Origin3D() : super._alloc();
+  Origin3D.fromNative(ffi.Pointer<WGPUOrigin3d> ptr) : super._adopt(ptr);
+  Origin3D._copy(ffi.Pointer<WGPUOrigin3d> ptr) : super._copy(ptr);
+
+  Origin3D copy() => Origin3D._copy(_ptr);
 
   WGPUOrigin3d get _ref => _ptr.ref;
 
@@ -352,10 +415,13 @@ class Origin3D extends _WGPUType<WGPUOrigin3d> {
 }
 
 class TextureCopyView extends _WGPUType<WGPUTextureCopyView> {
-  TextureCopyView() : super.init(ffi.allocate<WGPUTextureCopyView>());
+  TextureCopyView() : super._alloc();
   TextureCopyView.fromNative(ffi.Pointer<WGPUTextureCopyView> ptr)
-      : super.adopt(ptr);
-  TextureCopyView copy() => TextureCopyView.fromNative(_copy());
+      : super._adopt(ptr);
+  TextureCopyView._copy(ffi.Pointer<WGPUTextureCopyView> ptr)
+      : super._copy(ptr);
+
+  TextureCopyView copy() => TextureCopyView._copy(_ptr);
 
   WGPUTextureCopyView get _ref => _ptr.ref;
 
@@ -366,9 +432,11 @@ class TextureCopyView extends _WGPUType<WGPUTextureCopyView> {
 
 /// Extent of a texture related operation.
 class Extent3D extends _WGPUType<WGPUExtent3d> {
-  Extent3D() : super.init(ffi.allocate<WGPUExtent3d>());
-  Extent3D.fromNative(ffi.Pointer<WGPUExtent3d> ptr) : super.adopt(ptr);
-  Extent3D copy() => Extent3D.fromNative(_copy());
+  Extent3D() : super._alloc();
+  Extent3D.fromNative(ffi.Pointer<WGPUExtent3d> ptr) : super._adopt(ptr);
+  Extent3D._copy(ffi.Pointer<WGPUExtent3d> ptr) : super._copy(ptr);
+
+  Extent3D copy() => Extent3D._copy(_ptr);
 
   WGPUExtent3d get _ref => _ptr.ref;
 
@@ -379,12 +447,14 @@ class Extent3D extends _WGPUType<WGPUExtent3d> {
 
 /// Describes a [`CommandBuffer`].
 class CommandBufferDescriptor extends _WGPUType<WGPUCommandBufferDescriptor> {
-  CommandBufferDescriptor()
-      : super.init(ffi.allocate<WGPUCommandBufferDescriptor>());
+  CommandBufferDescriptor() : super._alloc();
   CommandBufferDescriptor.fromNative(
       ffi.Pointer<WGPUCommandBufferDescriptor> ptr)
-      : super.adopt(ptr);
-  CommandBufferDescriptor copy() => CommandBufferDescriptor.fromNative(_copy());
+      : super._adopt(ptr);
+  CommandBufferDescriptor._copy(ffi.Pointer<WGPUCommandBufferDescriptor> ptr)
+      : super._copy(ptr);
+
+  CommandBufferDescriptor copy() => CommandBufferDescriptor._copy(_ptr);
 
   WGPUCommandBufferDescriptor get _ref => _ptr.ref;
 
@@ -393,10 +463,12 @@ class CommandBufferDescriptor extends _WGPUType<WGPUCommandBufferDescriptor> {
 }
 
 class BindGroupEntry extends _WGPUType<WGPUBindGroupEntry> {
-  BindGroupEntry() : super.init(ffi.allocate<WGPUBindGroupEntry>());
+  BindGroupEntry() : super._alloc();
   BindGroupEntry.fromNative(ffi.Pointer<WGPUBindGroupEntry> ptr)
-      : super.adopt(ptr);
-  BindGroupEntry copy() => BindGroupEntry.fromNative(_copy());
+      : super._adopt(ptr);
+  BindGroupEntry._copy(ffi.Pointer<WGPUBindGroupEntry> ptr) : super._copy(ptr);
+
+  BindGroupEntry copy() => BindGroupEntry._copy(_ptr);
 
   WGPUBindGroupEntry get _ref => _ptr.ref;
 
@@ -409,10 +481,13 @@ class BindGroupEntry extends _WGPUType<WGPUBindGroupEntry> {
 }
 
 class BindGroupDescriptor extends _WGPUType<WGPUBindGroupDescriptor> {
-  BindGroupDescriptor() : super.init(ffi.allocate<WGPUBindGroupDescriptor>());
+  BindGroupDescriptor() : super._alloc();
   BindGroupDescriptor.fromNative(ffi.Pointer<WGPUBindGroupDescriptor> ptr)
-      : super.adopt(ptr);
-  BindGroupDescriptor copy() => BindGroupDescriptor.fromNative(_copy());
+      : super._adopt(ptr);
+  BindGroupDescriptor._copy(ffi.Pointer<WGPUBindGroupDescriptor> ptr)
+      : super._copy(ptr);
+
+  BindGroupDescriptor copy() => BindGroupDescriptor._copy(_ptr);
 
   WGPUBindGroupDescriptor get _ref => _ptr.ref;
 
@@ -430,10 +505,13 @@ class BindGroupDescriptor extends _WGPUType<WGPUBindGroupDescriptor> {
 }
 
 class BindGroupLayoutEntry extends _WGPUType<WGPUBindGroupLayoutEntry> {
-  BindGroupLayoutEntry() : super.init(ffi.allocate<WGPUBindGroupLayoutEntry>());
+  BindGroupLayoutEntry() : super._alloc();
   BindGroupLayoutEntry.fromNative(ffi.Pointer<WGPUBindGroupLayoutEntry> ptr)
-      : super.adopt(ptr);
-  BindGroupLayoutEntry copy() => BindGroupLayoutEntry.fromNative(_copy());
+      : super._adopt(ptr);
+  BindGroupLayoutEntry._copy(ffi.Pointer<WGPUBindGroupLayoutEntry> ptr)
+      : super._copy(ptr);
+
+  BindGroupLayoutEntry copy() => BindGroupLayoutEntry._copy(_ptr);
 
   WGPUBindGroupLayoutEntry get _ref => _ptr.ref;
 
@@ -462,13 +540,15 @@ class BindGroupLayoutEntry extends _WGPUType<WGPUBindGroupLayoutEntry> {
 
 class BindGroupLayoutDescriptor
     extends _WGPUType<WGPUBindGroupLayoutDescriptor> {
-  BindGroupLayoutDescriptor()
-      : super.init(ffi.allocate<WGPUBindGroupLayoutDescriptor>());
+  BindGroupLayoutDescriptor() : super._alloc();
   BindGroupLayoutDescriptor.fromNative(
       ffi.Pointer<WGPUBindGroupLayoutDescriptor> ptr)
-      : super.adopt(ptr);
-  BindGroupLayoutDescriptor copy() =>
-      BindGroupLayoutDescriptor.fromNative(_copy());
+      : super._adopt(ptr);
+  BindGroupLayoutDescriptor._copy(
+      ffi.Pointer<WGPUBindGroupLayoutDescriptor> ptr)
+      : super._copy(ptr);
+
+  BindGroupLayoutDescriptor copy() => BindGroupLayoutDescriptor._copy(_ptr);
 
   WGPUBindGroupLayoutDescriptor get _ref => _ptr.ref;
 
@@ -486,10 +566,13 @@ class BindGroupLayoutDescriptor
 
 /// Describes a [`Buffer`].
 class BufferDescriptor extends _WGPUType<WGPUBufferDescriptor> {
-  BufferDescriptor() : super.init(ffi.allocate<WGPUBufferDescriptor>());
+  BufferDescriptor() : super._alloc();
   BufferDescriptor.fromNative(ffi.Pointer<WGPUBufferDescriptor> ptr)
-      : super.adopt(ptr);
-  BufferDescriptor copy() => BufferDescriptor.fromNative(_copy());
+      : super._adopt(ptr);
+  BufferDescriptor._copy(ffi.Pointer<WGPUBufferDescriptor> ptr)
+      : super._copy(ptr);
+
+  BufferDescriptor copy() => BufferDescriptor._copy(_ptr);
 
   WGPUBufferDescriptor get _ref => _ptr.ref;
 
@@ -510,13 +593,14 @@ class BufferDescriptor extends _WGPUType<WGPUBufferDescriptor> {
 
 /// Describes a [`CommandEncoder`].
 class CommandEncoderDescriptor extends _WGPUType<WGPUCommandEncoderDescriptor> {
-  CommandEncoderDescriptor()
-      : super.init(ffi.allocate<WGPUCommandEncoderDescriptor>());
+  CommandEncoderDescriptor() : super._alloc();
   CommandEncoderDescriptor.fromNative(
       ffi.Pointer<WGPUCommandEncoderDescriptor> ptr)
-      : super.adopt(ptr);
-  CommandEncoderDescriptor copy() =>
-      CommandEncoderDescriptor.fromNative(_copy());
+      : super._adopt(ptr);
+  CommandEncoderDescriptor._copy(ffi.Pointer<WGPUCommandEncoderDescriptor> ptr)
+      : super._copy(ptr);
+
+  CommandEncoderDescriptor copy() => CommandEncoderDescriptor._copy(_ptr);
 
   WGPUCommandEncoderDescriptor get _ref => _ptr.ref;
 
@@ -526,13 +610,15 @@ class CommandEncoderDescriptor extends _WGPUType<WGPUCommandEncoderDescriptor> {
 
 class ProgrammableStageDescriptor
     extends _WGPUType<WGPUProgrammableStageDescriptor> {
-  ProgrammableStageDescriptor()
-      : super.init(ffi.allocate<WGPUProgrammableStageDescriptor>());
+  ProgrammableStageDescriptor() : super._alloc();
   ProgrammableStageDescriptor.fromNative(
       ffi.Pointer<WGPUProgrammableStageDescriptor> ptr)
-      : super.adopt(ptr);
-  ProgrammableStageDescriptor copy() =>
-      ProgrammableStageDescriptor.fromNative(_copy());
+      : super._adopt(ptr);
+  ProgrammableStageDescriptor._copy(
+      ffi.Pointer<WGPUProgrammableStageDescriptor> ptr)
+      : super._copy(ptr);
+
+  ProgrammableStageDescriptor copy() => ProgrammableStageDescriptor._copy(_ptr);
 
   WGPUProgrammableStageDescriptor get _ref => _ptr.ref;
 
@@ -543,13 +629,15 @@ class ProgrammableStageDescriptor
 
 class ComputePipelineDescriptor
     extends _WGPUType<WGPUComputePipelineDescriptor> {
-  ComputePipelineDescriptor()
-      : super.init(ffi.allocate<WGPUComputePipelineDescriptor>());
+  ComputePipelineDescriptor() : super._alloc();
   ComputePipelineDescriptor.fromNative(
       ffi.Pointer<WGPUComputePipelineDescriptor> ptr)
-      : super.adopt(ptr);
-  ComputePipelineDescriptor copy() =>
-      ComputePipelineDescriptor.fromNative(_copy());
+      : super._adopt(ptr);
+  ComputePipelineDescriptor._copy(
+      ffi.Pointer<WGPUComputePipelineDescriptor> ptr)
+      : super._copy(ptr);
+
+  ComputePipelineDescriptor copy() => ComputePipelineDescriptor._copy(_ptr);
 
   WGPUComputePipelineDescriptor get _ref => _ptr.ref;
 
@@ -560,13 +648,14 @@ class ComputePipelineDescriptor
 }
 
 class PipelineLayoutDescriptor extends _WGPUType<WGPUPipelineLayoutDescriptor> {
-  PipelineLayoutDescriptor()
-      : super.init(ffi.allocate<WGPUPipelineLayoutDescriptor>());
+  PipelineLayoutDescriptor() : super._alloc();
   PipelineLayoutDescriptor.fromNative(
       ffi.Pointer<WGPUPipelineLayoutDescriptor> ptr)
-      : super.adopt(ptr);
-  PipelineLayoutDescriptor copy() =>
-      PipelineLayoutDescriptor.fromNative(_copy());
+      : super._adopt(ptr);
+  PipelineLayoutDescriptor._copy(ffi.Pointer<WGPUPipelineLayoutDescriptor> ptr)
+      : super._copy(ptr);
+
+  PipelineLayoutDescriptor copy() => PipelineLayoutDescriptor._copy(_ptr);
 
   WGPUPipelineLayoutDescriptor get _ref => _ptr.ref;
 
@@ -577,13 +666,16 @@ class PipelineLayoutDescriptor extends _WGPUType<WGPUPipelineLayoutDescriptor> {
 
 class RenderBundleEncoderDescriptor
     extends _WGPUType<WGPURenderBundleEncoderDescriptor> {
-  RenderBundleEncoderDescriptor()
-      : super.init(ffi.allocate<WGPURenderBundleEncoderDescriptor>());
+  RenderBundleEncoderDescriptor() : super._alloc();
   RenderBundleEncoderDescriptor.fromNative(
       ffi.Pointer<WGPURenderBundleEncoderDescriptor> ptr)
-      : super.adopt(ptr);
+      : super._adopt(ptr);
+  RenderBundleEncoderDescriptor._copy(
+      ffi.Pointer<WGPURenderBundleEncoderDescriptor> ptr)
+      : super._copy(ptr);
+
   RenderBundleEncoderDescriptor copy() =>
-      RenderBundleEncoderDescriptor.fromNative(_copy());
+      RenderBundleEncoderDescriptor._copy(_ptr);
 
   WGPURenderBundleEncoderDescriptor get _ref => _ptr.ref;
 
@@ -613,13 +705,16 @@ class RenderBundleEncoderDescriptor
 /// Describes the state of the rasterizer in a render pipeline.
 class RasterizationStateDescriptor
     extends _WGPUType<WGPURasterizationStateDescriptor> {
-  RasterizationStateDescriptor()
-      : super.init(ffi.allocate<WGPURasterizationStateDescriptor>());
+  RasterizationStateDescriptor() : super._alloc();
   RasterizationStateDescriptor.fromNative(
       ffi.Pointer<WGPURasterizationStateDescriptor> ptr)
-      : super.adopt(ptr);
+      : super._adopt(ptr);
+  RasterizationStateDescriptor._copy(
+      ffi.Pointer<WGPURasterizationStateDescriptor> ptr)
+      : super._copy(ptr);
+
   RasterizationStateDescriptor copy() =>
-      RasterizationStateDescriptor.fromNative(_copy());
+      RasterizationStateDescriptor._copy(_ptr);
 
   WGPURasterizationStateDescriptor get _ref => _ptr.ref;
 
@@ -634,10 +729,13 @@ class RasterizationStateDescriptor
 ///
 /// Alpha blending is very complicated: see the OpenGL or Vulkan spec for more information.
 class BlendDescriptor extends _WGPUType<WGPUBlendDescriptor> {
-  BlendDescriptor() : super.init(ffi.allocate<WGPUBlendDescriptor>());
+  BlendDescriptor() : super._alloc();
   BlendDescriptor.fromNative(ffi.Pointer<WGPUBlendDescriptor> ptr)
-      : super.adopt(ptr);
-  BlendDescriptor copy() => BlendDescriptor.fromNative(_copy());
+      : super._adopt(ptr);
+  BlendDescriptor._copy(ffi.Pointer<WGPUBlendDescriptor> ptr)
+      : super._copy(ptr);
+
+  BlendDescriptor copy() => BlendDescriptor._copy(_ptr);
 
   WGPUBlendDescriptor get _ref => _ptr.ref;
 
@@ -648,10 +746,13 @@ class BlendDescriptor extends _WGPUType<WGPUBlendDescriptor> {
 
 /// Describes the color state of a render pipeline.
 class ColorStateDescriptor extends _WGPUType<WGPUColorStateDescriptor> {
-  ColorStateDescriptor() : super.init(ffi.allocate<WGPUColorStateDescriptor>());
+  ColorStateDescriptor() : super._alloc();
   ColorStateDescriptor.fromNative(ffi.Pointer<WGPUColorStateDescriptor> ptr)
-      : super.adopt(ptr);
-  ColorStateDescriptor copy() => ColorStateDescriptor.fromNative(_copy());
+      : super._adopt(ptr);
+  ColorStateDescriptor._copy(ffi.Pointer<WGPUColorStateDescriptor> ptr)
+      : super._copy(ptr);
+
+  ColorStateDescriptor copy() => ColorStateDescriptor._copy(_ptr);
 
   WGPUColorStateDescriptor get _ref => _ptr.ref;
 
@@ -676,13 +777,15 @@ class ColorStateDescriptor extends _WGPUType<WGPUColorStateDescriptor> {
 /// If you are not using stencil state, set this to [`StencilStateFaceDescriptor::IGNORE`].
 class StencilStateFaceDescriptor
     extends _WGPUType<WGPUStencilStateFaceDescriptor> {
-  StencilStateFaceDescriptor()
-      : super.init(ffi.allocate<WGPUStencilStateFaceDescriptor>());
+  StencilStateFaceDescriptor() : super._alloc();
   StencilStateFaceDescriptor.fromNative(
       ffi.Pointer<WGPUStencilStateFaceDescriptor> ptr)
-      : super.adopt(ptr);
-  StencilStateFaceDescriptor copy() =>
-      StencilStateFaceDescriptor.fromNative(_copy());
+      : super._adopt(ptr);
+  StencilStateFaceDescriptor._copy(
+      ffi.Pointer<WGPUStencilStateFaceDescriptor> ptr)
+      : super._copy(ptr);
+
+  StencilStateFaceDescriptor copy() => StencilStateFaceDescriptor._copy(_ptr);
 
   WGPUStencilStateFaceDescriptor get _ref => _ptr.ref;
 
@@ -703,13 +806,15 @@ class StencilStateFaceDescriptor
 /// Describes the depth/stencil state in a render pipeline.
 class DepthStencilStateDescriptor
     extends _WGPUType<WGPUDepthStencilStateDescriptor> {
-  DepthStencilStateDescriptor()
-      : super.init(ffi.allocate<WGPUDepthStencilStateDescriptor>());
+  DepthStencilStateDescriptor() : super._alloc();
   DepthStencilStateDescriptor.fromNative(
       ffi.Pointer<WGPUDepthStencilStateDescriptor> ptr)
-      : super.adopt(ptr);
-  DepthStencilStateDescriptor copy() =>
-      DepthStencilStateDescriptor.fromNative(_copy());
+      : super._adopt(ptr);
+  DepthStencilStateDescriptor._copy(
+      ffi.Pointer<WGPUDepthStencilStateDescriptor> ptr)
+      : super._copy(ptr);
+
+  DepthStencilStateDescriptor copy() => DepthStencilStateDescriptor._copy(_ptr);
 
   WGPUDepthStencilStateDescriptor get _ref => _ptr.ref;
 
@@ -746,13 +851,15 @@ class DepthStencilStateDescriptor
 /// Arrays of these can be made with the [`vertex_attr_array`] macro. Vertex attributes are assumed to be tightly packed.
 class VertexAttributeDescriptor
     extends _WGPUType<WGPUVertexAttributeDescriptor> {
-  VertexAttributeDescriptor()
-      : super.init(ffi.allocate<WGPUVertexAttributeDescriptor>());
+  VertexAttributeDescriptor() : super._alloc();
   VertexAttributeDescriptor.fromNative(
       ffi.Pointer<WGPUVertexAttributeDescriptor> ptr)
-      : super.adopt(ptr);
-  VertexAttributeDescriptor copy() =>
-      VertexAttributeDescriptor.fromNative(_copy());
+      : super._adopt(ptr);
+  VertexAttributeDescriptor._copy(
+      ffi.Pointer<WGPUVertexAttributeDescriptor> ptr)
+      : super._copy(ptr);
+
+  VertexAttributeDescriptor copy() => VertexAttributeDescriptor._copy(_ptr);
 
   WGPUVertexAttributeDescriptor get _ref => _ptr.ref;
 
@@ -768,13 +875,16 @@ class VertexAttributeDescriptor
 
 class VertexBufferLayoutDescriptor
     extends _WGPUType<WGPUVertexBufferLayoutDescriptor> {
-  VertexBufferLayoutDescriptor()
-      : super.init(ffi.allocate<WGPUVertexBufferLayoutDescriptor>());
+  VertexBufferLayoutDescriptor() : super._alloc();
   VertexBufferLayoutDescriptor.fromNative(
       ffi.Pointer<WGPUVertexBufferLayoutDescriptor> ptr)
-      : super.adopt(ptr);
+      : super._adopt(ptr);
+  VertexBufferLayoutDescriptor._copy(
+      ffi.Pointer<WGPUVertexBufferLayoutDescriptor> ptr)
+      : super._copy(ptr);
+
   VertexBufferLayoutDescriptor copy() =>
-      VertexBufferLayoutDescriptor.fromNative(_copy());
+      VertexBufferLayoutDescriptor._copy(_ptr);
 
   WGPUVertexBufferLayoutDescriptor get _ref => _ptr.ref;
 
@@ -793,11 +903,13 @@ class VertexBufferLayoutDescriptor
 }
 
 class VertexStateDescriptor extends _WGPUType<WGPUVertexStateDescriptor> {
-  VertexStateDescriptor()
-      : super.init(ffi.allocate<WGPUVertexStateDescriptor>());
+  VertexStateDescriptor() : super._alloc();
   VertexStateDescriptor.fromNative(ffi.Pointer<WGPUVertexStateDescriptor> ptr)
-      : super.adopt(ptr);
-  VertexStateDescriptor copy() => VertexStateDescriptor.fromNative(_copy());
+      : super._adopt(ptr);
+  VertexStateDescriptor._copy(ffi.Pointer<WGPUVertexStateDescriptor> ptr)
+      : super._copy(ptr);
+
+  VertexStateDescriptor copy() => VertexStateDescriptor._copy(_ptr);
 
   WGPUVertexStateDescriptor get _ref => _ptr.ref;
 
@@ -815,13 +927,14 @@ class VertexStateDescriptor extends _WGPUType<WGPUVertexStateDescriptor> {
 }
 
 class RenderPipelineDescriptor extends _WGPUType<WGPURenderPipelineDescriptor> {
-  RenderPipelineDescriptor()
-      : super.init(ffi.allocate<WGPURenderPipelineDescriptor>());
+  RenderPipelineDescriptor() : super._alloc();
   RenderPipelineDescriptor.fromNative(
       ffi.Pointer<WGPURenderPipelineDescriptor> ptr)
-      : super.adopt(ptr);
-  RenderPipelineDescriptor copy() =>
-      RenderPipelineDescriptor.fromNative(_copy());
+      : super._adopt(ptr);
+  RenderPipelineDescriptor._copy(ffi.Pointer<WGPURenderPipelineDescriptor> ptr)
+      : super._copy(ptr);
+
+  RenderPipelineDescriptor copy() => RenderPipelineDescriptor._copy(_ptr);
 
   WGPURenderPipelineDescriptor get _ref => _ptr.ref;
 
@@ -861,10 +974,13 @@ class RenderPipelineDescriptor extends _WGPUType<WGPURenderPipelineDescriptor> {
 }
 
 class SamplerDescriptor extends _WGPUType<WGPUSamplerDescriptor> {
-  SamplerDescriptor() : super.init(ffi.allocate<WGPUSamplerDescriptor>());
+  SamplerDescriptor() : super._alloc();
   SamplerDescriptor.fromNative(ffi.Pointer<WGPUSamplerDescriptor> ptr)
-      : super.adopt(ptr);
-  SamplerDescriptor copy() => SamplerDescriptor.fromNative(_copy());
+      : super._adopt(ptr);
+  SamplerDescriptor._copy(ffi.Pointer<WGPUSamplerDescriptor> ptr)
+      : super._copy(ptr);
+
+  SamplerDescriptor copy() => SamplerDescriptor._copy(_ptr);
 
   WGPUSamplerDescriptor get _ref => _ptr.ref;
 
@@ -893,9 +1009,12 @@ class SamplerDescriptor extends _WGPUType<WGPUSamplerDescriptor> {
 }
 
 class ShaderSource extends _WGPUType<WGPUShaderSource> {
-  ShaderSource() : super.init(ffi.allocate<WGPUShaderSource>());
-  ShaderSource.fromNative(ffi.Pointer<WGPUShaderSource> ptr) : super.adopt(ptr);
-  ShaderSource copy() => ShaderSource.fromNative(_copy());
+  ShaderSource() : super._alloc();
+  ShaderSource.fromNative(ffi.Pointer<WGPUShaderSource> ptr)
+      : super._adopt(ptr);
+  ShaderSource._copy(ffi.Pointer<WGPUShaderSource> ptr) : super._copy(ptr);
+
+  ShaderSource copy() => ShaderSource._copy(_ptr);
 
   WGPUShaderSource get _ref => _ptr.ref;
 
@@ -906,10 +1025,13 @@ class ShaderSource extends _WGPUType<WGPUShaderSource> {
 
 /// Describes a [`SwapChain`].
 class SwapChainDescriptor extends _WGPUType<WGPUSwapChainDescriptor> {
-  SwapChainDescriptor() : super.init(ffi.allocate<WGPUSwapChainDescriptor>());
+  SwapChainDescriptor() : super._alloc();
   SwapChainDescriptor.fromNative(ffi.Pointer<WGPUSwapChainDescriptor> ptr)
-      : super.adopt(ptr);
-  SwapChainDescriptor copy() => SwapChainDescriptor.fromNative(_copy());
+      : super._adopt(ptr);
+  SwapChainDescriptor._copy(ffi.Pointer<WGPUSwapChainDescriptor> ptr)
+      : super._copy(ptr);
+
+  SwapChainDescriptor copy() => SwapChainDescriptor._copy(_ptr);
 
   WGPUSwapChainDescriptor get _ref => _ptr.ref;
 
@@ -933,10 +1055,13 @@ class SwapChainDescriptor extends _WGPUType<WGPUSwapChainDescriptor> {
 
 /// Describes a [`Texture`].
 class TextureDescriptor extends _WGPUType<WGPUTextureDescriptor> {
-  TextureDescriptor() : super.init(ffi.allocate<WGPUTextureDescriptor>());
+  TextureDescriptor() : super._alloc();
   TextureDescriptor.fromNative(ffi.Pointer<WGPUTextureDescriptor> ptr)
-      : super.adopt(ptr);
-  TextureDescriptor copy() => TextureDescriptor.fromNative(_copy());
+      : super._adopt(ptr);
+  TextureDescriptor._copy(ffi.Pointer<WGPUTextureDescriptor> ptr)
+      : super._copy(ptr);
+
+  TextureDescriptor copy() => TextureDescriptor._copy(_ptr);
 
   WGPUTextureDescriptor get _ref => _ptr.ref;
 
@@ -966,13 +1091,16 @@ class TextureDescriptor extends _WGPUType<WGPUTextureDescriptor> {
 /// Describes a [`RenderBundle`].
 class RenderBundleDescriptor_Label
     extends _WGPUType<WGPURenderBundleDescriptor_Label> {
-  RenderBundleDescriptor_Label()
-      : super.init(ffi.allocate<WGPURenderBundleDescriptor_Label>());
+  RenderBundleDescriptor_Label() : super._alloc();
   RenderBundleDescriptor_Label.fromNative(
       ffi.Pointer<WGPURenderBundleDescriptor_Label> ptr)
-      : super.adopt(ptr);
+      : super._adopt(ptr);
+  RenderBundleDescriptor_Label._copy(
+      ffi.Pointer<WGPURenderBundleDescriptor_Label> ptr)
+      : super._copy(ptr);
+
   RenderBundleDescriptor_Label copy() =>
-      RenderBundleDescriptor_Label.fromNative(_copy());
+      RenderBundleDescriptor_Label._copy(_ptr);
 
   WGPURenderBundleDescriptor_Label get _ref => _ptr.ref;
 
@@ -981,11 +1109,13 @@ class RenderBundleDescriptor_Label
 }
 
 class RequestAdapterOptions extends _WGPUType<WGPURequestAdapterOptions> {
-  RequestAdapterOptions()
-      : super.init(ffi.allocate<WGPURequestAdapterOptions>());
+  RequestAdapterOptions() : super._alloc();
   RequestAdapterOptions.fromNative(ffi.Pointer<WGPURequestAdapterOptions> ptr)
-      : super.adopt(ptr);
-  RequestAdapterOptions copy() => RequestAdapterOptions.fromNative(_copy());
+      : super._adopt(ptr);
+  RequestAdapterOptions._copy(ffi.Pointer<WGPURequestAdapterOptions> ptr)
+      : super._copy(ptr);
+
+  RequestAdapterOptions copy() => RequestAdapterOptions._copy(_ptr);
 
   WGPURequestAdapterOptions get _ref => _ptr.ref;
 
@@ -996,10 +1126,13 @@ class RequestAdapterOptions extends _WGPUType<WGPURequestAdapterOptions> {
 }
 
 class SwapChainOutput extends _WGPUType<WGPUSwapChainOutput> {
-  SwapChainOutput() : super.init(ffi.allocate<WGPUSwapChainOutput>());
+  SwapChainOutput() : super._alloc();
   SwapChainOutput.fromNative(ffi.Pointer<WGPUSwapChainOutput> ptr)
-      : super.adopt(ptr);
-  SwapChainOutput copy() => SwapChainOutput.fromNative(_copy());
+      : super._adopt(ptr);
+  SwapChainOutput._copy(ffi.Pointer<WGPUSwapChainOutput> ptr)
+      : super._copy(ptr);
+
+  SwapChainOutput copy() => SwapChainOutput._copy(_ptr);
 
   WGPUSwapChainOutput get _ref => _ptr.ref;
 
@@ -1010,11 +1143,13 @@ class SwapChainOutput extends _WGPUType<WGPUSwapChainOutput> {
 
 /// Describes a [`TextureView`].
 class TextureViewDescriptor extends _WGPUType<WGPUTextureViewDescriptor> {
-  TextureViewDescriptor()
-      : super.init(ffi.allocate<WGPUTextureViewDescriptor>());
+  TextureViewDescriptor() : super._alloc();
   TextureViewDescriptor.fromNative(ffi.Pointer<WGPUTextureViewDescriptor> ptr)
-      : super.adopt(ptr);
-  TextureViewDescriptor copy() => TextureViewDescriptor.fromNative(_copy());
+      : super._adopt(ptr);
+  TextureViewDescriptor._copy(ffi.Pointer<WGPUTextureViewDescriptor> ptr)
+      : super._copy(ptr);
+
+  TextureViewDescriptor copy() => TextureViewDescriptor._copy(_ptr);
 
   WGPUTextureViewDescriptor get _ref => _ptr.ref;
 
@@ -1046,13 +1181,16 @@ class TextureViewDescriptor extends _WGPUType<WGPUTextureViewDescriptor> {
 
 class AnisotropicSamplerDescriptorExt
     extends _WGPUType<WGPUAnisotropicSamplerDescriptorExt> {
-  AnisotropicSamplerDescriptorExt()
-      : super.init(ffi.allocate<WGPUAnisotropicSamplerDescriptorExt>());
+  AnisotropicSamplerDescriptorExt() : super._alloc();
   AnisotropicSamplerDescriptorExt.fromNative(
       ffi.Pointer<WGPUAnisotropicSamplerDescriptorExt> ptr)
-      : super.adopt(ptr);
+      : super._adopt(ptr);
+  AnisotropicSamplerDescriptorExt._copy(
+      ffi.Pointer<WGPUAnisotropicSamplerDescriptorExt> ptr)
+      : super._copy(ptr);
+
   AnisotropicSamplerDescriptorExt copy() =>
-      AnisotropicSamplerDescriptorExt.fromNative(_copy());
+      AnisotropicSamplerDescriptorExt._copy(_ptr);
 
   WGPUAnisotropicSamplerDescriptorExt get _ref => _ptr.ref;
 
