@@ -23,11 +23,11 @@ jobs:
         channel: dev
     - name: Download WGPU
       uses: suisei-cn/actions-download-file@v1
-      id: wgpu.zip
+      id: wgpuzip
       with:
         url: https://github.com/gfx-rs/wgpu-native/releases/download/v0.6.0/wgpu-${{runner.os}}-64-release.zip
     - name: Setup WGPU
-      run: unzip ${{steps.wgpu.zip.outputs.filename}} -d ${{github.workspace}}
+      run: unzip ${{steps.wgpuzip.outputs.filename}} -d ${{github.workspace}}
     - name: Get Dependencies
       run: dart pub get
     - name: Run Tests
