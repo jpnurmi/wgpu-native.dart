@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  ci:
+    name: CI
+    runs-on: ${{matrix.os}}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    continue-on-error: true
+    steps:
+    - name: Git checkout
+      uses: actions/checkout@v2
+    - name: Install Dart
+      uses: dart-lang/setup-dart@v0.1
+      with:
+        channel: dev
+    - name: Download WGPU
+      uses: suisei-cn/actions-download-file@v1
+      id: wgpu.zip
+      with:
+        url: https://github.com/gfx-rs/wgpu-native/releases/download/v0.6.0/wgpu-${{runner.os}}-64-release.zip
+    - name: Setup WGPU
+      run: unzip ${{steps.wgpu.zip.outputs.filename}} -d ${{github.workspace}}
+    - name: Get Dependencies
+      run: dart pub get
+    - name: Run Tests
+      run: dart test
