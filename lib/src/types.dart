@@ -43,7 +43,9 @@ class _WGPUType<T extends ffi.NativeType> {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-    return other is _WGPUType && _ptr == other._ptr;
+    return other is _WGPUType &&
+        (_ptr == other._ptr ||
+            ffi.memcmp(_ptr, other._ptr, ffi.sizeOf<T>()) == 0);
   }
 
   @override
