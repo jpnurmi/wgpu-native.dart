@@ -1,4 +1,4 @@
-import 'package:wgpu_ffi/wgpu_ffi.dart';
+import 'package:wgpu_native/wgpu_native.dart';
 import 'package:test/test.dart';
 
 void main() {

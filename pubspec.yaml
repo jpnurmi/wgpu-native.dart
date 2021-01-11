@@ -1,9 +1,9 @@
-name: wgpu_ffi
-description: Experimental WGPU Dart FFI bindings.
+name: wgpu_native
+description: Experimental WGPU Dart bindings.
 version: 0.0.0
-homepage: https://github.com/jpnurmi/dart_wgpu_ffi
-repository: https://github.com/jpnurmi/dart_wgpu_ffi
-issue_tracker: https://github.com/jpnurmi/dart_wgpu_ffi/issues
+homepage: https://github.com/jpnurmi/wgpu-native.dart
+repository: https://github.com/jpnurmi/wgpu-native.dart
+issue_tracker: https://github.com/jpnurmi/wgpu-native.dart/issues
 
 environment:
   sdk: '>=2.12.0-0 <3.0.0'

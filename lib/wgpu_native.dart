@@ -1,5 +1,5 @@
-/// Experimental WGPU Dart FFI bindings
-library wgpu_ffi;
+/// Experimental WGPU Dart bindings
+library wgpu_native;
 
 export 'src/callbacks.dart';
 export 'src/constants.dart';
