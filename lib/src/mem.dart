@@ -10,9 +10,9 @@ typedef MemcpyC = Pointer Function(Pointer, Pointer, IntPtr);
 typedef Memcmp = int Function(Pointer, Pointer, int);
 typedef MemcmpC = Int32 Function(Pointer, Pointer, IntPtr);
 
-// Note that kernel32.dll is the correct name in both 32-bit and 64-bit.
+// ### TODO: vcruntime dll version & mode (debug vs. release)
 final DynamicLibrary stdlib = Platform.isWindows
-    ? DynamicLibrary.open('kernel32.dll')
+    ? DynamicLibrary.open('vcruntime140.dll')
     : DynamicLibrary.process();
 
 Pointer memset(Pointer ptr, int value, int count) {
