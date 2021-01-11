@@ -1,3 +1,3 @@
-# WebGPU Dart FFI bindings
+# WGPU Dart FFI bindings
 
 Experimental WGPU Dart FFI bindings
