@@ -32,3 +32,5 @@ jobs:
       run: dart pub get
     - name: Run Tests
       run: dart test
+      env:
+        LIBWGPU_PATH: ${{github.workspace}}

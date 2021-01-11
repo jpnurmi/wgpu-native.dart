@@ -9,7 +9,7 @@ LibWGPU get dylib {
   return _dylib ??= LibWGPU(ffi.DynamicLibrary.open(
     resolveDylibPath(
       'wgpu_native',
-      dartDefine: 'libwgpu-path',
+      dartDefine: 'LIBWGPU_PATH',
       environmentVariable: 'LIBWGPU_PATH',
     ),
   ));
